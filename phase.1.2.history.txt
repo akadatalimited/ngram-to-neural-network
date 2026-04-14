@@ -1,0 +1,98 @@
+2058  time out/nn_char_model training/Darby.verses.txt learned/nn_char_darby.bin 3 8 64 0.05
+2059  vim nn_char_darby.results.txt
+2060  vim src/nn_char_generate.c
+2061  gcc -O2 -Wall -Wextra -std=c11 src/nn_char_generate.c -lm -o out/nn_char_generate
+2062  out/nn_char_generate learned/nn_char_darby.bin "And God " 300 greedy
+2063  out/nn_char_generate learned/nn_char_darby.bin "And God " 300 random 12345
+2064  out/nn_char_generate learned/nn_char_darby.bin "And God " 300 random 54321
+2065  time out/nn_char_model training/Darby.verses.txt learned/nn_char_darby.bin 5 8 96 0.05
+2066  out/nn_char_generate learned/nn_char_darby.bin "And God " 300 greedy
+2067  out/nn_char_generate learned/nn_char_darby.bin "And God " 300 random 12345
+2068  out/nn_char_generate learned/nn_char_darby.bin "And God " 300 random 54321
+2069  ls -lah learned/
+2070  vim src/nn_char_generate_temp.c
+2071  git add --all
+2072  git commit -m'nn_char_model.c and nn_char_generate.c created and trained'
+2073  git push
+2074  git pull
+2075  git push
+2076  vim src/nn_char_generate.c
+2077  vim src/nn_char_generate_temp.c
+2078  gcc -O2 -Wall -Wextra -std=c11 src/nn_char_generate_temp.c -lm -o out/nn_char_generate_temp
+2079  out/nn_char_generate_temp learned/nn_char_darby.bin "And God " 300 0.7 random 12345
+2080  out/nn_char_generate_temp learned/nn_char_darby.bin "And God " 300 1.0 random 12345
+2081  out/nn_char_generate_temp learned/nn_char_darby.bin "And God " 300 1.3 random 12345
+2082  out/nn_char_generate_temp learned/nn_char_darby.bin "And God " 300 1.0 greedy
+2083  out/nn_char_generate_temp learned/nn_char_darby.bin "And God " 300 3.0 greedy
+2084  out/nn_char_generate_temp learned/nn_char_darby.bin "And God " 300 .1greedy
+2085  out/nn_char_generate_temp learned/nn_char_darby.bin "And God " 3000 1.1 greedy
+2086  out/nn_char_generate_temp learned/nn_char_darby.bin "And God " 3000 9.1 greedy
+2087  out/nn_char_generate_temp learned/nn_char_darby.bin "Thus say " 3000 9.1 greedy
+2088  out/nn_char_generate_temp learned/nn_char_darby.bin "Thus say " 3000 1.1 greedy
+2089  out/nn_char_generate_temp learned/nn_char_darby.bin "Thus say " 3000 1.1 random 12345
+2090  out/nn_char_generate_temp learned/nn_char_darby.bin "Thus say " 200 1.1 random 12345
+2091  out/nn_char_generate_temp learned/nn_char_darby.bin "Thus say " 200 0.9 random 16342
+2092  vim src/nn_char_generate_markers.c
+2093  gcc -O2 -Wall -Wextra -std=c11 src/nn_char_generate_markers.c -lm -o out/nn_char_generate_markers
+2094  out/nn_char_generate_markers learned/nn_char_darby.bin "Thus say " 500 1.1 5 random 12345
+2095  out/nn_char_generate_markers learned/nn_char_darby.bin "Thus say " 500 0.9 5 random 16342
+2096  out/nn_char_generate_markers learned/nn_char_darby.bin "And God " 3001.0 2 greedy
+2097  out/nn_char_generate_markers learned/nn_char_darby.bin "And God " 3001.2 2 random
+2098  out/nn_char_generate_markers learned/nn_char_darby.bin "And God " 3001.2 2232 random
+2099  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 1.2 2232 random
+2100  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 9.2 2232 random
+2101  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 5.2 2232 random
+2102  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 3.2 2232 random
+2103  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 1.2 2232 random
+2104  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 2 2232 random
+2105  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 3 2232 random
+2106  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 3 6343647.5636 random
+2107  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 2 6343647.5636 random
+2108  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 1 6343647.5636 random
+2109  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 .5 6343647.5636 random
+2110  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 .1 6343647.5636 random
+2111  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 .1 6343647 random
+2112  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 .01 6343647 random
+2113  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 1 6343647 random
+2114  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 1 24823612 random
+2115  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 1300 1 24823612 random
+2116  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 1300 1.4 24823612 random
+2117  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 1300 1.2 24823612 random
+2118  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 9 24823612 random
+2119  out/nn_char_generate_markers learned/nn_char_darby.bin "Jesus said" 300 .9 24823612 random
+2120  vim README.NeuralModel.md
+2121  git add --all
+2122  git commit -m'add README for Neural Model and code with learnings'
+2123  git push
+2124  ls
+2125  ls learned/
+2126  strings learned/nn_char_darby.bin | more
+2127  vim src/nn_word_model.c
+2128  gcc -O2 -Wall -Wextra -std=c11 src/nn_word_model.c -lm -o out/nn_word_model
+2129  time out/nn_word_model training/Darby.verses.txt learned/nn_word_darby.bin 3 4 64 0.05
+2130  gcc -O2 -Wall -Wextra -std=c11 src/nn_word_model.c -lm -o out/nn_word_model
+2131* time out/nn_word_model training/Darby.verses.txt learned/nn_word_darby8k.bin 3 4 64 0.05
+2132  vim src/nn_word_generate.c
+2133  gcc -O2 -Wall -Wextra -std=c11 src/nn_word_generate.c -lm -o out/nn_word_generate
+2134  out/nn_word_generate learned/nn_word_darby.bin "and god" 30 greedy
+2135  out/nn_word_generate learned/nn_word_darby.bin "and god" 30 random 12345
+2136  out/nn_word_generate learned/nn_word_darby.bin "jesus said" 30 random54321
+2137  vim src/nn_word_generate_markers.c
+2138  gcc -O2 -Wall -Wextra -std=c11 src/nn_word_generate_markers.c -lm -o out/nn_word_generate_markers
+2139  out/nn_word_generate_markers learned/nn_word_darby.bin "and god" 40 3greedy
+2140  out/nn_word_generate_markers learned/nn_word_darby.bin "and god" 40 3random 12345
+2141  out/nn_word_generate_markers learned/nn_word_darby.bin "jesus said" 40 3 random 54321
+2142  out/nn_word_generate_markers learned/nn_word_darby.bin "and god" 40 3random 12345
+2143  out/nn_word_generate_markers learned/nn_word_darby.bin "and god" 40 1random 12345
+2144  out/nn_word_generate_markers learned/nn_word_darby.bin "and god" 40 6random 12345
+2145  out/nn_word_generate_markers learned/nn_word_darby.bin "and god" 40 3random 12345
+2146  gcc -O2 -Wall -Wextra -std=c11 src/nn_word_model.c -lm -o out/nn_word_model
+2147  gcc -O2 -Wall -Wextra -std=c11 src/nn_word_generate.c -lm -o out/nn_word_generate
+2148  gcc -O2 -Wall -Wextra -std=c11 src/nn_word_generate_markers.c -lm -o out/nn_word_generate_markers
+2149  time out/nn_word_model training/Darby.verses.txt learned/nn_word_darby8k.bin 3 4 64 0.05
+2150  out/nn_word_generate_markers learned/nn_word_darby.bin "and god" 40 3random 12345
+2151  out/nn_word_generate_markers learned/nn_word_darby8k.bin "and god" 403 random 12345
+2152  out/nn_word_generate_markers learned/nn_word_darby.bin "jesus said" 40 3 random 54321
+2153  out/nn_word_generate_markers learned/nn_word_darby8k.bin "jesus said"40 3 random 54321
+2154  out/nn_word_generate_markers learned/nn_word_darby8k.bin "and god" 403 random 12345
+2155  out/nn_word_generate_markers learned/nn_word_darby8k.bin "jesus said"40 3 random 54321
