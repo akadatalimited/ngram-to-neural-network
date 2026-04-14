@@ -1,0 +1,195 @@
+# Neural Network Learning Makefile
+#
+# Layout:
+#   src/      - C source files
+#   out/      - compiled binaries
+#   learned/  - trained model binaries
+#   training/ - input corpus files
+#
+# Neural teaching order:
+#   1. nn_char_model
+#   2. nn_char_generate
+#   3. nn_char_generate_temp
+#   4. nn_char_generate_markers
+#   5. nn_word_model
+#   6. nn_word_generate
+#   7. nn_word_generate_markers
+
+CC := gcc
+CFLAGS := -O2 -Wall -Wextra -std=c11
+LDLIBS := -lm
+
+SRC_DIR := src
+OUT_DIR := out
+LEARNED_DIR := learned
+TRAINING_DIR := training
+
+NN_CHAR_MODEL_SRC := $(SRC_DIR)/nn_char_model.c
+NN_CHAR_GENERATE_SRC := $(SRC_DIR)/nn_char_generate.c
+NN_CHAR_GENERATE_TEMP_SRC := $(SRC_DIR)/nn_char_generate_temp.c
+NN_CHAR_GENERATE_MARKERS_SRC := $(SRC_DIR)/nn_char_generate_markers.c
+NN_WORD_MODEL_SRC := $(SRC_DIR)/nn_word_model.c
+NN_WORD_GENERATE_SRC := $(SRC_DIR)/nn_word_generate.c
+NN_WORD_GENERATE_MARKERS_SRC := $(SRC_DIR)/nn_word_generate_markers.c
+
+NN_CHAR_MODEL_BIN := $(OUT_DIR)/nn_char_model
+NN_CHAR_GENERATE_BIN := $(OUT_DIR)/nn_char_generate
+NN_CHAR_GENERATE_TEMP_BIN := $(OUT_DIR)/nn_char_generate_temp
+NN_CHAR_GENERATE_MARKERS_BIN := $(OUT_DIR)/nn_char_generate_markers
+NN_WORD_MODEL_BIN := $(OUT_DIR)/nn_word_model
+NN_WORD_GENERATE_BIN := $(OUT_DIR)/nn_word_generate
+NN_WORD_GENERATE_MARKERS_BIN := $(OUT_DIR)/nn_word_generate_markers
+
+DARBY_VERSES_TXT := $(TRAINING_DIR)/Darby.verses.txt
+
+NN_CHAR_MODEL_FILE := $(LEARNED_DIR)/nn_char_darby.bin
+NN_WORD_MODEL_FILE := $(LEARNED_DIR)/nn_word_darby.bin
+NN_WORD_MODEL_8K_FILE := $(LEARNED_DIR)/nn_word_darby8k.bin
+
+.PHONY: help all dirs \
+	stage1 stage2 stage3 stage4 stage5 stage6 stage7 \
+	nn-char-model nn-char-generate nn-char-generate-temp nn-char-generate-markers \
+	nn-word-model nn-word-generate nn-word-generate-markers \
+	train-char train-word train-word-8k \
+	demo-char-greedy demo-char-random demo-char-temp demo-char-markers \
+	demo-word-greedy demo-word-random demo-word-markers demo-compare-word-vocab \
+	clean
+
+help:
+	@echo "Neural Network Learning Makefile"
+	@echo
+	@echo "Build stages in teaching order:"
+	@echo "  make stage1   Build nn_char_model"
+	@echo "  make stage2   Build nn_char_generate"
+	@echo "  make stage3   Build nn_char_generate_temp"
+	@echo "  make stage4   Build nn_char_generate_markers"
+	@echo "  make stage5   Build nn_word_model"
+	@echo "  make stage6   Build nn_word_generate"
+	@echo "  make stage7   Build nn_word_generate_markers"
+	@echo
+	@echo "Build everything:"
+	@echo "  make all"
+	@echo
+	@echo "Training targets:"
+	@echo "  make train-char      Train the character model on training/Darby.verses.txt"
+	@echo "  make train-word      Train the word model using the current MAX_VOCAB setting"
+	@echo "  make train-word-8k   Train the word model to learned/nn_word_darby8k.bin"
+	@echo
+	@echo "Demo targets:"
+	@echo "  make demo-char-greedy"
+	@echo "  make demo-char-random"
+	@echo "  make demo-char-temp"
+	@echo "  make demo-char-markers"
+	@echo "  make demo-word-greedy"
+	@echo "  make demo-word-random"
+	@echo "  make demo-word-markers"
+	@echo "  make demo-compare-word-vocab"
+	@echo
+	@echo "Cleanup:"
+	@echo "  make clean   Remove compiled neural binaries from out/"
+	@echo
+	@echo "Manual examples:"
+	@echo "  $(OUT_DIR)/nn_char_model $(DARBY_VERSES_TXT) $(NN_CHAR_MODEL_FILE) 5 8 96 0.05"
+	@echo "  $(OUT_DIR)/nn_char_generate_temp $(NN_CHAR_MODEL_FILE) \"And God \" 300 0.9 random 12345"
+	@echo "  $(OUT_DIR)/nn_char_generate_markers $(NN_CHAR_MODEL_FILE) \"Thus say \" 500 1.1 5 random 12345"
+	@echo "  $(OUT_DIR)/nn_word_model $(DARBY_VERSES_TXT) $(NN_WORD_MODEL_FILE) 3 4 64 0.05"
+	@echo "  $(OUT_DIR)/nn_word_generate_markers $(NN_WORD_MODEL_FILE) \"jesus said\" 40 3 random 54321"
+
+dirs:
+	@mkdir -p $(OUT_DIR) $(LEARNED_DIR)
+
+all: stage1 stage2 stage3 stage4 stage5 stage6 stage7
+
+stage1: nn-char-model
+stage2: nn-char-generate
+stage3: nn-char-generate-temp
+stage4: nn-char-generate-markers
+stage5: nn-word-model
+stage6: nn-word-generate
+stage7: nn-word-generate-markers
+
+nn-char-model: $(NN_CHAR_MODEL_BIN)
+nn-char-generate: $(NN_CHAR_GENERATE_BIN)
+nn-char-generate-temp: $(NN_CHAR_GENERATE_TEMP_BIN)
+nn-char-generate-markers: $(NN_CHAR_GENERATE_MARKERS_BIN)
+nn-word-model: $(NN_WORD_MODEL_BIN)
+nn-word-generate: $(NN_WORD_GENERATE_BIN)
+nn-word-generate-markers: $(NN_WORD_GENERATE_MARKERS_BIN)
+
+$(NN_CHAR_MODEL_BIN): $(NN_CHAR_MODEL_SRC) | dirs
+	$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
+
+$(NN_CHAR_GENERATE_BIN): $(NN_CHAR_GENERATE_SRC) | dirs
+	$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
+
+$(NN_CHAR_GENERATE_TEMP_BIN): $(NN_CHAR_GENERATE_TEMP_SRC) | dirs
+	$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
+
+$(NN_CHAR_GENERATE_MARKERS_BIN): $(NN_CHAR_GENERATE_MARKERS_SRC) | dirs
+	$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
+
+$(NN_WORD_MODEL_BIN): $(NN_WORD_MODEL_SRC) | dirs
+	$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
+
+$(NN_WORD_GENERATE_BIN): $(NN_WORD_GENERATE_SRC) | dirs
+	$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
+
+$(NN_WORD_GENERATE_MARKERS_BIN): $(NN_WORD_GENERATE_MARKERS_SRC) | dirs
+	$(CC) $(CFLAGS) $< -o $@ $(LDLIBS)
+
+train-char: $(NN_CHAR_MODEL_BIN)
+	$(NN_CHAR_MODEL_BIN) $(DARBY_VERSES_TXT) $(NN_CHAR_MODEL_FILE) 5 8 96 0.05
+
+train-word: $(NN_WORD_MODEL_BIN)
+	$(NN_WORD_MODEL_BIN) $(DARBY_VERSES_TXT) $(NN_WORD_MODEL_FILE) 3 4 64 0.05
+
+train-word-8k: $(NN_WORD_MODEL_BIN)
+	$(NN_WORD_MODEL_BIN) $(DARBY_VERSES_TXT) $(NN_WORD_MODEL_8K_FILE) 3 4 64 0.05
+
+demo-char-greedy: $(NN_CHAR_GENERATE_BIN)
+	$(NN_CHAR_GENERATE_BIN) $(NN_CHAR_MODEL_FILE) "And God " 300 greedy
+
+demo-char-random: $(NN_CHAR_GENERATE_BIN)
+	$(NN_CHAR_GENERATE_BIN) $(NN_CHAR_MODEL_FILE) "And God " 300 random 12345
+
+demo-char-temp: $(NN_CHAR_GENERATE_TEMP_BIN)
+	$(NN_CHAR_GENERATE_TEMP_BIN) $(NN_CHAR_MODEL_FILE) "Jesus said" 300 0.9 random 24823612
+	@echo
+	$(NN_CHAR_GENERATE_TEMP_BIN) $(NN_CHAR_MODEL_FILE) "Jesus said" 300 1.2 random 24823612
+
+demo-char-markers: $(NN_CHAR_GENERATE_MARKERS_BIN)
+	$(NN_CHAR_GENERATE_MARKERS_BIN) $(NN_CHAR_MODEL_FILE) "Thus say " 500 1.1 5 random 12345
+
+demo-word-greedy: $(NN_WORD_GENERATE_BIN)
+	$(NN_WORD_GENERATE_BIN) $(NN_WORD_MODEL_FILE) "and god" 30 greedy
+
+demo-word-random: $(NN_WORD_GENERATE_BIN)
+	$(NN_WORD_GENERATE_BIN) $(NN_WORD_MODEL_FILE) "and god" 30 random 12345
+	@echo
+	$(NN_WORD_GENERATE_BIN) $(NN_WORD_MODEL_FILE) "jesus said" 30 random 54321
+
+demo-word-markers: $(NN_WORD_GENERATE_MARKERS_BIN)
+	$(NN_WORD_GENERATE_MARKERS_BIN) $(NN_WORD_MODEL_FILE) "and god" 40 3 random 12345
+	@echo
+	$(NN_WORD_GENERATE_MARKERS_BIN) $(NN_WORD_MODEL_FILE) "jesus said" 40 3 random 54321
+
+demo-compare-word-vocab: $(NN_WORD_GENERATE_MARKERS_BIN)
+	$(NN_WORD_GENERATE_MARKERS_BIN) $(NN_WORD_MODEL_FILE) "and god" 40 3 random 12345
+	@echo
+	$(NN_WORD_GENERATE_MARKERS_BIN) $(NN_WORD_MODEL_8K_FILE) "and god" 40 3 random 12345
+	@echo
+	$(NN_WORD_GENERATE_MARKERS_BIN) $(NN_WORD_MODEL_FILE) "jesus said" 40 3 random 54321
+	@echo
+	$(NN_WORD_GENERATE_MARKERS_BIN) $(NN_WORD_MODEL_8K_FILE) "jesus said" 40 3 random 54321
+
+clean:
+	rm -f $(NN_CHAR_MODEL_BIN) \
+		$(NN_CHAR_GENERATE_BIN) \
+		$(NN_CHAR_GENERATE_TEMP_BIN) \
+		$(NN_CHAR_GENERATE_MARKERS_BIN) \
+		$(NN_WORD_MODEL_BIN) \
+		$(NN_WORD_GENERATE_BIN) \
+		$(NN_WORD_GENERATE_MARKERS_BIN)
+
+
+

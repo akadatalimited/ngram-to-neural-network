@@ -377,3 +377,221 @@ The next step should not be chosen blindly. Reasonable options now are:
 
 The important thing is that the first neural step is now complete and can be referred back to later.
 
+
+## Second neural stage: word-level model
+
+The next step after the character model was to move to a word-level neural network.
+
+The task changes from:
+
+> given the last N characters, predict the next character
+
+to:
+
+> given the last N words, predict the next word
+
+This increases complexity significantly:
+
+* vocabulary becomes large (thousands of tokens instead of ~100 characters)
+* model size grows quickly
+* training time increases
+* outputs become more structurally meaningful (words instead of fragments)
+
+### Files added in this stage
+
+#### `src/nn_word_model.c`
+
+Trains a simple word-level neural network.
+
+It:
+
+* tokenises input text into words
+* builds a vocabulary (fixed size cap)
+* encodes context as word indices
+* predicts the next word
+* trains using backpropagation
+* saves the model as a binary file
+
+#### `src/nn_word_generate.c`
+
+Generates text from a trained word model.
+
+Supports:
+
+* greedy decoding
+* random decoding
+* seeded randomness
+
+#### `src/nn_word_generate_markers.c`
+
+Handles presentation of special tokens.
+
+Because the training corpus includes boundary markers, the model learns them as normal tokens.
+
+This file:
+
+* removes `starttok`
+* removes `endtok`
+* allows output to be presented as readable text
+
+### Vocabulary size experiments
+
+Two vocabulary sizes were tested:
+
+#### 4K vocabulary
+
+Command:
+
+```bash
+out/nn_word_model training/Darby.verses.txt learned/nn_word_darby.bin 3 4 64 0.05
+```
+
+Observed:
+
+* training tokens: `841933`
+* vocab size: `4096`
+* epochs: `3`
+* context length: `4`
+* hidden size: `64`
+
+Loss:
+
+* epoch 1: `4.330761`
+* epoch 2: `3.936000`
+* epoch 3: `3.767138`
+
+Runtime:
+
+* about `24 minutes`
+
+Behaviour:
+
+* strong repetition of common structures
+* frequent use of high-frequency words (`the`, `of`, etc.)
+* noticeable fallback to generic phrase patterns
+
+#### 8K vocabulary
+
+Command:
+
+```bash
+out/nn_word_model training/Darby.verses.txt learned/nn_word_darby8k.bin 3 4 64 0.05
+```
+
+Observed:
+
+* vocab size: `8192`
+
+Loss:
+
+* epoch 1: `4.508208`
+* epoch 2: `4.099454`
+* epoch 3: `3.924306`
+
+Runtime:
+
+* about `47 minutes`
+
+Behaviour:
+
+* broader word coverage
+* less collapse into the most common phrase loops
+* more varied and expressive output
+
+Important note:
+
+Loss values are not directly comparable between 4K and 8K models, because the prediction space is larger in the 8K case.
+
+### Generation observations
+
+With marker-aware generation:
+
+Example:
+
+```bash
+out/nn_word_generate_markers learned/nn_word_darby8k.bin "and god" 40 3 random 12345
+```
+
+Observed outputs showed:
+
+* recognisable structure at word level
+* improved readability compared to character model
+* still limited long-range coherence
+* occasional unusual or rare word combinations
+
+The model now produces full words instead of fragments, which is a major qualitative step forward.
+
+### Model size observation
+
+The neural model binary is significantly larger than the input text.
+
+Example:
+
+* training corpus: ~4.4MB
+* 4K model: ~5.1MB
+* 8K model: ~11MB
+
+Reason:
+
+* neural networks store dense weight matrices
+* size scales with:
+
+  * vocabulary size
+  * hidden layer size
+  * context length
+
+This is fundamentally different from n-gram storage, which scales with observed sequences.
+
+### Training data considerations
+
+The model was trained using a single prepared corpus:
+
+```text
+training/Darby.verses.txt
+```
+
+Key points:
+
+* one clean corpus is preferable at this stage
+* multiple formats (JSON, CSV, YAML, SQL) are not additional information
+* avoid duplicating the same text across formats
+* introduce new texts deliberately and one at a time
+
+### Neural Makefile
+
+A dedicated build file was introduced:
+
+```text
+Makefile.neuralnet
+```
+
+This mirrors the earlier `Makefile.ngram` and provides:
+
+* build targets for:
+
+  * character model tools
+  * word model tools
+* clear separation of neural stage from n-gram stage
+
+### What this stage proved
+
+The transition from character to word model showed:
+
+* vocabulary size has a strong effect on output quality
+* training time scales significantly with vocabulary size
+* word-level models improve readability immediately
+* neural models store knowledge in weights, not explicit sequences
+
+### Current position
+
+At this point the neural path includes:
+
+* character-level model
+* word-level model
+* marker-aware generation
+* temperature-based sampling
+
+This forms a complete second stage beyond n-grams.
+
+Further expansion (larger corpora, multiple translations, token models) should be approached carefully to preserve clarity of learning outcomes.
+
