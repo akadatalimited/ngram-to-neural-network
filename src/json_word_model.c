@@ -160,21 +160,6 @@ static void model_print_top(struct Model *model, size_t top_n)
     }
 }
 
-static int is_title_word(const char *word)
-{
-    static const char *titles[] = {
-        "God", "Jehovah", "Lord", "LORD", "Christ", "Spirit"
-    };
-    size_t i;
-
-    for (i = 0; i < sizeof(titles) / sizeof(titles[0]); i++) {
-        if (strcmp(word, titles[i]) == 0) {
-            return 1;
-        }
-    }
-
-    return 0;
-}
 
 static int split_title_suffix(const char *src, char *left, size_t left_size,
                               char *right, size_t right_size)
