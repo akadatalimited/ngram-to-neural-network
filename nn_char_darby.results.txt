@@ -1,0 +1,14 @@
+training chars: 4600794
+vocab size: 71
+context len: 8
+hidden size: 64
+epochs: 3
+learning rate: 0.0500
+
+epoch 1/3  avg_loss=1.276458
+epoch 2/3  avg_loss=1.200957
+epoch 3/3  avg_loss=1.186347
+
+real    3m38.994s
+user    3m38.666s
+sys     0m0.003s
