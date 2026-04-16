@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+show_help() {
+    cat <<'EOF'
+Usage:
+  ask "question here"
+
+Examples:
+  ask "What is hate?"
+  ask "What is love?"
+  ask "What does Genesis 1:1 say?"
+EOF
+}
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || $# -lt 1 ]]; then
+    show_help
+    exit 0
+fi
+
+QUESTION="$*"
+
+CHECKPOINT="${ASK_CHECKPOINT:-$HOME/learning_model/learned/gpt_corpus_structured_v2/checkpoint_latest.pt}" 
+TOKEN_DIR="${ASK_CHECKPOINT:-$HOME/learning_model/learned/corpus_structured_v2_compatible}"
+#CHECKPOINT="${ASK_CHECKPOINT:-$HOME/learning_model/learned/gpt_corpus_mixed_128k/checkpoint_latest.pt}"
+#TOKEN_DIR="${ASK_TOKEN_DIR:-$HOME/learning_model/learned/corpus_mixed_tokenized_128k}"
+MAX_NEW_TOKENS="${ASK_MAX_NEW_TOKENS:-80}"
+TEMPERATURE="${ASK_TEMPERATURE:-0.9}"
+MODE="${ASK_MODE:-random}"
+SEED="${ASK_SEED:-12345}"
+TOP_K="${ASK_TOP_K:-30}"
+
+cd "$HOME/learning_model"
+
+python python/2_generate_gpt_all_works.py \
+    "$CHECKPOINT" \
+    "$QUESTION" \
+    "$MAX_NEW_TOKENS" \
+    "$TEMPERATURE" \
+    "$MODE" \
+    "$SEED" \
+    --token-dir "$TOKEN_DIR" \
+    --top-k "$TOP_K"

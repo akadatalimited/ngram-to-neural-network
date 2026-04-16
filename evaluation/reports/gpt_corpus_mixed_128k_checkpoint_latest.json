@@ -1,0 +1,84 @@
+{
+  "checkpoint": "learned/gpt_corpus_mixed_128k/checkpoint_latest.pt",
+  "results": [
+    {
+      "category": "definition",
+      "prompt": "What is a fable?",
+      "answer": "A small group of people who is engaged in the same time, the most important person.",
+      "keywords": [
+        "story",
+        "moral",
+        "animals"
+      ],
+      "keyword_hits": 0,
+      "keyword_total": 3,
+      "echoed_prompt": false
+    },
+    {
+      "category": "definition",
+      "prompt": "What lesson does a fable teach?",
+      "answer": "To get together impossible, as of a class, as of a class, as of a class, as of a class, as of a class, as of a class, as of a class, as of a class, as of a class, as of a class, as of a class, as of a class, as of a class, as of a class, as of a class,",
+      "keywords": [
+        "moral",
+        "lesson",
+        "teach"
+      ],
+      "keyword_hits": 0,
+      "keyword_total": 3,
+      "echoed_prompt": false
+    },
+    {
+      "category": "story",
+      "prompt": "Tell a short story about a fox and a crow",
+      "answer": "Tell a short story about a fox and a crow. Tell a short story about a fox and a crow. Tell a short story about a fox and a crow. Tell a short story about a fox and a crow. Tell a short story about a fox and a crow. Tell a short story about a fox and a crow. Tell a short story about a fox and a crow. Tell a short",
+      "keywords": [
+        "fox",
+        "crow"
+      ],
+      "keyword_hits": 2,
+      "keyword_total": 2,
+      "echoed_prompt": false
+    },
+    {
+      "category": "faith",
+      "prompt": "What does Genesis 1:1 say?",
+      "answer": "And he said, Behold, my son, thine only son is one of thy kindred, and the cattle of thy kindred: and behold, if he will kill thee, and the cattle of thy kindred be not known where thou seekest not: that thou shouldest be my brother, and the cattle of thy kindred be not known where thou seekest not: that thou shouldest be my brother, and the cattle of",
+      "keywords": [
+        "beginning",
+        "created",
+        "earth",
+        "heavens"
+      ],
+      "keyword_hits": 0,
+      "keyword_total": 4,
+      "echoed_prompt": false
+    },
+    {
+      "category": "faith",
+      "prompt": "Who is Moses in the Bible?",
+      "answer": "A dialect of the Bible language.",
+      "keywords": [
+        "Moses",
+        "Israel",
+        "Egypt",
+        "law"
+      ],
+      "keyword_hits": 0,
+      "keyword_total": 4,
+      "echoed_prompt": false
+    },
+    {
+      "category": "abstract",
+      "prompt": "Explain what love is",
+      "answer": "In truth and strength, in the presence of God; to the age FI is Fi His kindness.",
+      "keywords": [
+        "love",
+        "care",
+        "affection"
+      ],
+      "keyword_hits": 0,
+      "keyword_total": 3,
+      "echoed_prompt": false
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "checkpoint": "learned/gpt_corpus_structured_v2/checkpoint_latest.pt",
+  "results": [
+    {
+      "category": "definition",
+      "prompt": "What is a fable?",
+      "answer": "A man who cohabits or has a lack of value, as an offence or a thing or a thing.",
+      "keywords": [
+        "story",
+        "moral",
+        "animals"
+      ],
+      "keyword_hits": 0,
+      "keyword_total": 3,
+      "echoed_prompt": false
+    },
+    {
+      "category": "definition",
+      "prompt": "What lesson does a fable teach?",
+      "answer": "To keep in mind, as under a terrifying ear.",
+      "keywords": [
+        "moral",
+        "lesson",
+        "teach"
+      ],
+      "keyword_hits": 0,
+      "keyword_total": 3,
+      "echoed_prompt": false
+    },
+    {
+      "category": "story",
+      "prompt": "Tell a short story about a fox and a crow",
+      "answer": "To keep off;",
+      "keywords": [
+        "fox",
+        "crow"
+      ],
+      "keyword_hits": 0,
+      "keyword_total": 2,
+      "echoed_prompt": false
+    },
+    {
+      "category": "faith",
+      "prompt": "What does Genesis 1:1 say?",
+      "answer": "And Abraham gave gifts unto all these words.",
+      "keywords": [
+        "beginning",
+        "created",
+        "earth",
+        "heavens"
+      ],
+      "keyword_hits": 0,
+      "keyword_total": 4,
+      "echoed_prompt": false
+    },
+    {
+      "category": "faith",
+      "prompt": "Who is Moses in the Bible?",
+      "answer": "A male person who has a living organism.",
+      "keywords": [
+        "Moses",
+        "Israel",
+        "Egypt",
+        "law"
+      ],
+      "keyword_hits": 0,
+      "keyword_total": 4,
+      "echoed_prompt": false
+    },
+    {
+      "category": "abstract",
+      "prompt": "Explain what love is",
+      "answer": "The voice of all them that hate thee; when they do so love thy peace.",
+      "keywords": [
+        "love",
+        "care",
+        "affection"
+      ],
+      "keyword_hits": 1,
+      "keyword_total": 3,
+      "echoed_prompt": false
+    }
+  ]
+}

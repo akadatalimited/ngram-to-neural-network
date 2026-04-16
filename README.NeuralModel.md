@@ -595,3 +595,194 @@ This forms a complete second stage beyond n-grams.
 
 Further expansion (larger corpora, multiple translations, token models) should be approached carefully to preserve clarity of learning outcomes.
 
+## Third neural stage: larger word-context experiments
+
+After the initial word-level models, the next step was to increase context length and hidden-layer size while keeping the same training corpus and vocabulary family.
+
+The corpus remained:
+
+```text
+training/Darby.verses.txt
+````
+
+The vocabulary remained in the 8K range for these experiments.
+
+### Why this stage was needed
+
+The earlier word model showed that:
+
+* moving from character-level to word-level greatly improved readability
+* moving from 4K to 8K vocabulary improved word variety
+* context length still remained small
+
+So the next question was:
+
+> does a larger context window help more than a larger hidden layer?
+
+### Models trained in this stage
+
+#### 8K vocabulary, context 8, hidden 64
+
+Command:
+
+```bash
+time out/nn_word_model training/Darby.verses.txt learned/nn_word_darby8k_ctx8.bin 3 8 64 0.05
+```
+
+Observed:
+
+* training tokens: `841933`
+* vocab size: `8192`
+* context length: `8`
+* hidden size: `64`
+
+Loss:
+
+* epoch 1: `4.496284`
+* epoch 2: `4.056903`
+* epoch 3: `3.850842`
+
+Runtime:
+
+* about `121m44s`
+
+Observed generation:
+
+```bash
+out/nn_word_generate_markers learned/nn_word_darby8k_ctx8.bin "and god" 40 3 random 12345
+out/nn_word_generate_markers learned/nn_word_darby8k_ctx8.bin "jesus said" 40 3 random 54321
+out/nn_word_generate_markers learned/nn_word_darby8k_ctx8.bin "before abraham i am" 40 3 random 54321
+```
+
+Example outputs:
+
+```text
+and god and one of the earth and the things that are not in the midst of the lamb
+whom i heard it bury the nations and fear of judgment
+and i shall say i say to mine
+```
+
+```text
+jesus said the fire and these things after me he that a liberty affording write to death and the nations that shall come
+these are they who be in seed whose god comes post with the bride of david
+```
+
+```text
+before abraham i am the eyes of the dead golden tree
+and no toss loves thou crooked and the nations that they may not be inhabited
+god of the adversaries through the animal sennacherib those that understand the flux of
+```
+
+Meaning:
+
+* increasing context from 4 to 8 improved phrase continuity
+* local structure became stronger
+* runtime increased sharply because input width doubled
+
+#### 8K vocabulary, context 8, hidden 128
+
+Command:
+
+```bash
+time out/nn_word_model training/Darby.verses.txt learned/nn_word_darby8k_ctx8_h128.bin 3 8 128 0.05
+```
+
+Loss:
+
+* epoch 1: `4.491712`
+* epoch 2: `4.040148`
+* epoch 3: `3.811521`
+
+Runtime:
+
+* about `254m29s`
+
+Model size:
+
+* about `37MB`
+
+Observed generation:
+
+```bash
+out/nn_word_generate_markers learned/nn_word_darby8k_ctx8_h128.bin "and god" 40 3 random 12345
+out/nn_word_generate_markers learned/nn_word_darby8k_ctx8_h128.bin "jesus said" 40 3 random 54321
+out/nn_word_generate_markers learned/nn_word_darby8k_ctx8_h128.bin "before abraham i am" 40 3 random 54321
+```
+
+Example outputs:
+
+```text
+and god and on the flesh and the end of the city he shall be a day of life and the violent one things in lions and the great crowds were husbands
+and i said to this thou art stumbling
+```
+
+```text
+jesus said the nations and its oblation are these things shall not enter toward its feet nor shall be with him and shall be it with a half twelve
+but these are rejoicing ensnared seven days only shall give it
+```
+
+```text
+before abraham i am the city and let him slay it be been not justified shovels any one sake of the word of the war and the slaughtered of the image of the ages god
+altogether she is despised and birds and
+```
+
+Meaning:
+
+* increasing hidden size from 64 to 128 improved output quality further
+* the gain was real, however smaller than the earlier jump from context 4 to context 8
+* runtime and model size roughly doubled again
+
+### Comparison so far
+
+At this point the progression was:
+
+* 8K, context 4, hidden 64
+* 8K, context 8, hidden 64
+* 8K, context 8, hidden 128
+
+General conclusion:
+
+* increasing context length gave the strongest improvement in phrase continuity
+* increasing hidden size still helped, however with smaller returns per extra cost
+* the one-hot word model scales steeply in:
+
+  * training time
+  * model size
+  * matrix size
+
+### Very large run started
+
+A still larger experiment was started:
+
+```bash
+time out/nn_word_model training/Darby.verses.txt learned/nn_word_darby8k_ctx16_h256.bin 3 16 256 0.05
+```
+
+This run was expected to take many hours and served as the point where CPU acceleration became an important next concern.
+
+### CPU scheduling and affinity
+
+Because the trainer is single-threaded, each model run used only one core heavily.
+
+Observed:
+
+* overall CPU usage stayed low on a many-core processor
+* two independent training jobs could be run at once
+* Linux sometimes scheduled heavy jobs onto E-cores
+
+This was improved by pinning long-running training jobs onto P-core CPU ranges using `taskset`, which gave more consistent execution speed without changing the code itself.
+
+### Why acceleration became necessary
+
+By this stage it was clear that the current word model architecture works, however scales poorly because it uses:
+
+* one-hot input vectors
+* dense input-to-hidden multiplication
+* full softmax over the entire vocabulary
+* single-threaded training loops
+
+This led naturally to the next planned step:
+
+* keep the readable C implementation
+* add OpenMP acceleration in a separate trainer file
+* preserve the original single-threaded trainer for reference
